@@ -1,7 +1,16 @@
 // TODO: GAME LOGIC //
 
+const playerFactory = (marker) => {
+    const placeMarker = (i, j) => {
+        gameBoard.updateBoard(i, j, marker);
+    };
+
+    return { placeMarker };
+};
+
 const gameBoard = (() => {
     const board = document.querySelector('.board');
+    const cellsDisplay = document.querySelectorAll('.cell');
     const boardSize = 3;
 
     const boardGrid = Array(boardSize)
@@ -13,41 +22,55 @@ const gameBoard = (() => {
             row.fill('');
         });
         const cells = document.querySelectorAll('.cell');
-        [...cells].forEach((cell) => {
+        [...cellsDisplay].forEach((cell) => {
             cell.innerText = '';
         });
     };
 
+    const checkForWin = (marker) => {
+        for (let i = 0; i < 3; i++) {
+            if (boardGrid[i].every((v) => v === boardGrid[i][0])) {
+                // displayController.win(marker);
+            }
+            if (boardGrid[0][i] === boardGrid[1][i] && boardGrid[0][i] === boardGrid[2][i]) {
+                // displayController.win(marker);
+            }
+        }
+        if (boardGrid[0][0] === boardGrid[1][1] && boardGrid[0][0] === boardGrid[2][2]) {
+        }
+        if (boardGrid[0][2] === boardGrid[1][1] && boardGrid[0][2] === boardGrid[2][0]) {
+        }
+    };
+
+    const updateBoard = (i, j, marker) => {
+        boardGrid[i][j] = marker;
+        document.getElementById(`${i}${j}`).textContent = marker;
+        displayController.checkForWin(marker);
+    };
+
     const createBoard = (() => {
-        let i = 1;
-        boardGrid.forEach((row) => {
-            row.forEach((cell) => {
+        boardGrid.forEach((row, i) => {
+            row.forEach((cell, j) => {
                 div = document.createElement('div');
                 div.classList.add('cell');
-                div.id = i;
+                div.id = `${i}${j}`;
                 div.innerText = cell;
 
                 board.appendChild(div);
-                i++;
             });
         });
     })();
 
-    return { boardGrid, createBoard, clearBoard };
+    return { boardGrid, createBoard, updateBoard, clearBoard, checkForWin };
 })();
 
-const displayController = (() => {})();
+const displayController = (() => {
+    return {};
+})();
 
-const playerFactory = (name, marker) => {
-    const placeMarker = (i, j) => {
-        gameBoard.boardGrid[i][j] = marker;
-    };
+const Player1 = playerFactory('O');
+const Player2 = playerFactory('X');
 
-    return { placeMarker, name };
-};
+gameBoard.checkForWin(Player1.marker);
 
-let me = playerFactory('a', 'O');
-
-me.placeMarker(1, 1);
-
-console.log(gameBoard.board);
+console.log(gameBoard.boardGrid);
