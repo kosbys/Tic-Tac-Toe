@@ -4,7 +4,17 @@ const gameBoard = (() => {
 
     const boardGrid = Array(boardSize)
         .fill()
-        .map(() => Array(boardSize).fill(''));
+        .map(() => Array(boardSize).fill('A'));
+
+    const clearBoard = () => {
+        boardGrid.forEach((row) => {
+            row.fill('');
+        });
+        const cells = document.querySelectorAll('.cell');
+        [...cells].forEach((cell) => {
+            cell.innerText = '';
+        });
+    };
 
     const createBoard = (() => {
         boardGrid.forEach((row, i) => {
@@ -19,7 +29,7 @@ const gameBoard = (() => {
         });
     })();
 
-    return { boardGrid };
+    return { boardGrid, createBoard, clearBoard };
 })();
 
 const displayController = (() => {})();
