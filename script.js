@@ -1,3 +1,5 @@
+// TODO: GAME LOGIC //
+
 const gameBoard = (() => {
     const board = document.querySelector('.board');
     const boardSize = 3;
@@ -17,13 +19,16 @@ const gameBoard = (() => {
     };
 
     const createBoard = (() => {
-        boardGrid.forEach((row, i) => {
-            row.forEach((cell, j) => {
+        let i = 1;
+        boardGrid.forEach((row) => {
+            row.forEach((cell) => {
                 div = document.createElement('div');
                 div.classList.add('cell');
+                div.id = i;
                 div.innerText = cell;
 
                 board.appendChild(div);
+                i++;
             });
         });
     })();
