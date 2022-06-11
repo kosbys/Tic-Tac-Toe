@@ -87,8 +87,8 @@ const displayController = (() => {
     const startGame = () => {};
 
     const changeTurn = () => {
-        players.forEach((players) => {
-            playerFactory.toggleFlag();
+        players.forEach((player) => {
+            player.toggleFlag();
         });
     };
 
