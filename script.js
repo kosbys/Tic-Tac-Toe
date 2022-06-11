@@ -21,7 +21,6 @@ const gameBoard = (() => {
             row.forEach((cell, j) => {
                 div = document.createElement('div');
                 div.classList.add('cell');
-                div.id = `#${i + j + 1}`;
                 div.innerText = cell;
 
                 board.appendChild(div);
