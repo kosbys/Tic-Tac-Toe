@@ -1,11 +1,25 @@
 // TODO: GAME LOGIC //
 
-const playerFactory = (marker) => {
+const playerFactory = (marker, turnFlag) => {
+    let flag = turnFlag;
+
     const placeMarker = (i, j) => {
-        gameBoard.updateBoard(i, j, marker);
+        displayController.updateBoard(i, j, marker);
     };
 
-    return { placeMarker };
+    const toggleFlag = () => {
+        if (flag === 0) {
+            flag = 1;
+        } else {
+            flag = 0;
+        }
+    };
+
+    const getFlag = () => {
+        return flag;
+    };
+
+    return { placeMarker, toggleFlag, getFlag, marker };
 };
 
 const gameBoard = (() => {
@@ -17,11 +31,12 @@ const gameBoard = (() => {
         .fill()
         .map(() => Array(boardSize).fill('A'));
 
+    const cellClick = () => {};
+
     const clearBoard = () => {
         boardGrid.forEach((row) => {
             row.fill('');
         });
-        const cells = document.querySelectorAll('.cell');
         [...cellsDisplay].forEach((cell) => {
             cell.innerText = '';
         });
@@ -37,15 +52,17 @@ const gameBoard = (() => {
             }
         }
         if (boardGrid[0][0] === boardGrid[1][1] && boardGrid[0][0] === boardGrid[2][2]) {
+            // displayController.win(marker);
         }
         if (boardGrid[0][2] === boardGrid[1][1] && boardGrid[0][2] === boardGrid[2][0]) {
+            // displayController.win(marker);
         }
     };
 
     const updateBoard = (i, j, marker) => {
         boardGrid[i][j] = marker;
         document.getElementById(`${i}${j}`).textContent = marker;
-        displayController.checkForWin(marker);
+        // displayController.checkForWin(marker);
     };
 
     const createBoard = (() => {
@@ -65,12 +82,29 @@ const gameBoard = (() => {
 })();
 
 const displayController = (() => {
-    return {};
+    const players = {
+        one: playerFactory('O', true),
+        two: playerFactory('X', false),
+    };
+
+    const startGame = () => {};
+
+    const changeTurn = () => {
+        for (const player in players) {
+            player.toggleFlag();
+        }
+    };
+
+    const updateBoard = (i, j, marker) => {
+        gameBoard.updateBoard(i, j, marker);
+        if (!gameBoard.checkForWin()) {
+            changeTurn();
+        }
+    };
+
+    return { changeTurn, updateBoard, players };
 })();
 
-const Player1 = playerFactory('O');
-const Player2 = playerFactory('X');
-
-gameBoard.checkForWin(Player1.marker);
-
 console.log(gameBoard.boardGrid);
+
+displayController.players.one.placeMarker(1, 1);
