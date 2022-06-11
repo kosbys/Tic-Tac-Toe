@@ -82,17 +82,14 @@ const gameBoard = (() => {
 })();
 
 const displayController = (() => {
-    const players = {
-        one: playerFactory('O', true),
-        two: playerFactory('X', false),
-    };
+    const players = [playerFactory('O', true), playerFactory('X', false)];
 
     const startGame = () => {};
 
     const changeTurn = () => {
-        for (const player in players) {
-            player.toggleFlag();
-        }
+        players.forEach((players) => {
+            playerFactory.toggleFlag();
+        });
     };
 
     const updateBoard = (i, j, marker) => {
@@ -107,4 +104,4 @@ const displayController = (() => {
 
 console.log(gameBoard.boardGrid);
 
-displayController.players.one.placeMarker(1, 1);
+displayController.players[0].placeMarker(1, 1);
