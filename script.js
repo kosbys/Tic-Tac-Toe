@@ -3,46 +3,51 @@
 const playerFactory = (marker, turnFlag) => {
     let flag = turnFlag;
 
-    const placeMarker = (i, j) => {
-        displayController.updateBoard(i, j, marker);
+    const placeMarker = (cell) => {
+        if (flag) {
+            gameBoard.updateBoard(cell, getMarker());
+        }
     };
 
     const toggleFlag = () => {
-        if (flag === 0) {
-            flag = 1;
-        } else {
-            flag = 0;
-        }
+        flag = !flag;
     };
 
     const getFlag = () => {
         return flag;
     };
 
-    return { placeMarker, toggleFlag, getFlag, marker };
+    const getMarker = () => {
+        return marker;
+    };
+
+    return { placeMarker, toggleFlag, getFlag, getMarker };
 };
 
 const gameBoard = (() => {
+    let cellsDisplay = document.querySelectorAll('.cell');
     const board = document.querySelector('.board');
-    const cellsDisplay = document.querySelectorAll('.cell');
     const boardSize = 3;
 
     const boardGrid = Array(boardSize)
         .fill()
-        .map(() => Array(boardSize).fill('A'));
+        .map(() => Array(boardSize).fill(''));
 
-    const cellClick = () => {};
+    const getCells = () => {
+        cellsDisplay = document.querySelectorAll('.cell');
+        return [...cellsDisplay];
+    };
 
     const clearBoard = () => {
+        getCells().forEach((cell) => {
+            cell.innerText = '';
+        });
         boardGrid.forEach((row) => {
             row.fill('');
         });
-        [...cellsDisplay].forEach((cell) => {
-            cell.innerText = '';
-        });
     };
 
-    const checkForWin = (marker) => {
+    const checkForWin = () => {
         for (let i = 0; i < 3; i++) {
             if (boardGrid[i].every((v) => v === boardGrid[i][0])) {
                 // displayController.win(marker);
@@ -59,10 +64,16 @@ const gameBoard = (() => {
         }
     };
 
-    const updateBoard = (i, j, marker) => {
-        boardGrid[i][j] = marker;
-        document.getElementById(`${i}${j}`).textContent = marker;
-        // displayController.checkForWin(marker);
+    const updateBoard = (cell, marker) => {
+        const cellPos = cell.split('');
+        boardGrid[cellPos[0]][cellPos[1]] = marker;
+
+        currentCell = document.getElementById(cell);
+        if (currentCell.innerText === '') {
+            currentCell.innerText = marker;
+        }
+
+        // displayController.checkForWin();
     };
 
     const createBoard = (() => {
@@ -74,34 +85,46 @@ const gameBoard = (() => {
                 div.innerText = cell;
 
                 board.appendChild(div);
+                getCells();
             });
         });
     })();
 
-    return { boardGrid, createBoard, updateBoard, clearBoard, checkForWin };
+    return { boardGrid, createBoard, getCells, updateBoard, clearBoard, checkForWin };
 })();
 
 const displayController = (() => {
-    const players = [playerFactory('O', true), playerFactory('X', false)];
+    let players = [playerFactory('O', true), playerFactory('X', false)];
+    let currentPlayer;
 
-    const startGame = () => {};
+    const getCurrentPlayer = () => {
+        players.forEach((player) => {
+            if (player.getFlag()) {
+                currentPlayer = player;
+            }
+        });
+        return currentPlayer;
+    };
 
-    const changeTurn = () => {
+    const changeTurns = () => {
         players.forEach((player) => {
             player.toggleFlag();
         });
     };
 
-    const updateBoard = (i, j, marker) => {
-        gameBoard.updateBoard(i, j, marker);
-        if (!gameBoard.checkForWin()) {
-            changeTurn();
-        }
+    const clickCells = () => {
+        gameBoard.getCells().forEach((cell) => {
+            cell.addEventListener('click', placeMarker);
+        });
     };
 
-    return { changeTurn, updateBoard, players };
+    const placeMarker = (e) => {
+        getCurrentPlayer().placeMarker(e.currentTarget.id);
+        changeTurns();
+    };
+
+    return { players, clickCells, getCurrentPlayer };
 })();
 
-console.log(gameBoard.boardGrid);
-
-displayController.players[0].placeMarker(1, 1);
+displayController.getCurrentPlayer();
+displayController.clickCells();

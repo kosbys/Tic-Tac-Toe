@@ -33,6 +33,9 @@ body {
 }
 
 .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-width: 7rem;
     min-height: 7rem;
     text-align: center;
