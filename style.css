@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Pangolin&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 body {
     height: 100vh;
@@ -21,6 +21,15 @@ body {
 
 .content {
     place-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.current-player {
+    font-family: 'Pangolin', cursive;
+    font-size: 2rem;
+    text-align: center;
 }
 
 .board {
@@ -34,17 +43,32 @@ body {
 
 .cell {
     display: flex;
+    font-family: 'Indie Flower', cursive;
     justify-content: center;
     align-items: center;
-    min-width: 7rem;
-    min-height: 7rem;
+    min-width: 8rem;
+    min-height: 8rem;
     text-align: center;
     color: #5c5f77;
     font-size: 5rem;
     background-color: #eff1f5;
 }
 
+.cell:hover {
+    opacity: 0.7;
+}
+
 .cell span {
+    animation: fadeIn 2s;
+}
+
+.win-message {
+    place-self: center;
+}
+
+.win-message span {
+    font-family: 'Pangolin', cursive;
+    font-size: 3rem;
     animation: fadeIn 2s;
 }
 

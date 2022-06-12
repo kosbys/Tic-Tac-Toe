@@ -1,16 +1,22 @@
-// TODO: GAME LOGIC //
+const content = document.querySelector('.content');
 
 const playerFactory = (marker, turnFlag) => {
     let flag = turnFlag;
 
     const placeMarker = (cell) => {
-        if (flag) {
+        if (!document.getElementById(cell).firstChild) {
             gameBoard.updateBoard(cell, getMarker());
+            return true;
         }
+        return false;
     };
 
     const toggleFlag = () => {
         flag = !flag;
+    };
+
+    const setFlag = (bool) => {
+        flag = bool;
     };
 
     const getFlag = () => {
@@ -21,7 +27,7 @@ const playerFactory = (marker, turnFlag) => {
         return marker;
     };
 
-    return { placeMarker, toggleFlag, getFlag, getMarker };
+    return { placeMarker, toggleFlag, getFlag, getMarker, setFlag };
 };
 
 const gameBoard = (() => {
@@ -40,51 +46,55 @@ const gameBoard = (() => {
 
     const clearBoard = () => {
         getCells().forEach((cell) => {
-            cell.innerText = '';
+            if (cell.firstChild) cell.removeChild(cell.firstChild);
         });
         boardGrid.forEach((row) => {
             row.fill('');
         });
+        displayController.newGame();
     };
 
-    const checkForWin = () => {
+    const checkForWin = (marker) => {
         for (let i = 0; i < 3; i++) {
-            if (boardGrid[i].every((v) => v === boardGrid[i][0])) {
-                // displayController.win(marker);
+            const win =
+                boardGrid[i].every((v) => v === marker) ||
+                (boardGrid[0][i] === marker &&
+                    boardGrid[0][i] === boardGrid[1][i] &&
+                    boardGrid[0][i] === boardGrid[2][i]) ||
+                (boardGrid[0][0] === marker &&
+                    boardGrid[0][0] === boardGrid[1][1] &&
+                    boardGrid[0][0] === boardGrid[2][2]) ||
+                ((boardGrid[0][2] === marker && boardGrid[0][2]) === boardGrid[1][1] &&
+                    boardGrid[0][2] === boardGrid[2][0]);
+
+            if (win) {
+                displayController.announceWin();
+                break;
             }
-            if (boardGrid[0][i] === boardGrid[1][i] && boardGrid[0][i] === boardGrid[2][i]) {
-                // displayController.win(marker);
-            }
-        }
-        if (boardGrid[0][0] === boardGrid[1][1] && boardGrid[0][0] === boardGrid[2][2]) {
-            // displayController.win(marker);
-        }
-        if (boardGrid[0][2] === boardGrid[1][1] && boardGrid[0][2] === boardGrid[2][0]) {
-            // displayController.win(marker);
         }
     };
 
     const updateBoard = (cell, marker) => {
         const cellPos = cell.split('');
-        boardGrid[cellPos[0]][cellPos[1]] = marker;
-
         currentCell = document.getElementById(cell);
-        if (currentCell.innerText === '') {
-            currentCell.firstChild.innerText = marker;
+        if (currentCell.innerText === '' && boardGrid[cellPos[0]][cellPos[1]] === '') {
+            boardGrid[cellPos[0]][cellPos[1]] = marker;
+
+            span = document.createElement('span');
+            span.innerText = marker;
+            currentCell.appendChild(span);
         }
+        checkForWin(marker);
 
         // displayController.checkForWin();
     };
 
     const createBoard = (() => {
         boardGrid.forEach((row, i) => {
-            row.forEach((cell, j) => {
+            row.forEach((_cell, j) => {
                 div = document.createElement('div');
-                span = document.createElement('span');
                 div.classList.add('cell');
                 div.id = `${i}${j}`;
-
-                div.appendChild(span);
                 div.style.userSelect = 'none';
 
                 board.appendChild(div);
@@ -109,25 +119,53 @@ const displayController = (() => {
         return currentPlayer;
     };
 
+    const announceWin = () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+
+        div.classList.add('win-message');
+        span.innerText = `Player ${getCurrentPlayer().getMarker()} wins!`;
+
+        div.appendChild(span);
+
+        content.appendChild(div);
+
+        gameBoard.getCells().forEach((cell) => {
+            cell.removeEventListener('click', placeMarker);
+        });
+
+        setTimeout(() => {
+            content.removeChild(content.lastChild);
+            gameBoard.clearBoard();
+        }, 2000);
+    };
+
     const changeTurns = () => {
         players.forEach((player) => {
             player.toggleFlag();
         });
+        const span = document.querySelector('.current-player').firstChild;
+        span.innerText = `Player ${getCurrentPlayer().getMarker()}'s turn`;
     };
 
-    const clickCells = () => {
+    const newGame = () => {
         gameBoard.getCells().forEach((cell) => {
             cell.addEventListener('click', placeMarker);
         });
+        players[0].setFlag(true);
+        players[1].setFlag(false);
+        const span = document.querySelector('.current-player').firstChild;
+        span.innerText = `Player ${getCurrentPlayer().getMarker()} begins`;
     };
 
     const placeMarker = (e) => {
-        getCurrentPlayer().placeMarker(e.currentTarget.id);
-        changeTurns();
+        const turnCheck = getCurrentPlayer().placeMarker(e.currentTarget.id);
+        if (turnCheck) {
+            changeTurns();
+        }
     };
 
-    return { players, clickCells, getCurrentPlayer };
+    return { players, newGame, getCurrentPlayer, announceWin };
 })();
 
-displayController.getCurrentPlayer();
-displayController.clickCells();
+displayController.newGame();
