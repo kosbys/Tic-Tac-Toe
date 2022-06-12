@@ -46,8 +46,8 @@ body {
     font-family: 'Indie Flower', cursive;
     justify-content: center;
     align-items: center;
-    min-width: 8rem;
-    min-height: 8rem;
+    min-width: 9rem;
+    min-height: 9rem;
     text-align: center;
     color: #5c5f77;
     font-size: 5rem;
@@ -89,6 +89,17 @@ body {
 
 .footer > a {
     text-decoration: none;
+}
+
+@media screen and (max-width: 1000px) {
+    .header {
+        padding: 0.5rem;
+        font-size: 1.5rem;
+    }
+
+    .footer {
+        font-size: 0.7rem;
+    }
 }
 
 /* TODO: ADD MEDIA QUERY FOR HEADER */
