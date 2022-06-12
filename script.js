@@ -70,7 +70,7 @@ const gameBoard = (() => {
 
         currentCell = document.getElementById(cell);
         if (currentCell.innerText === '') {
-            currentCell.innerText = marker;
+            currentCell.firstChild.innerText = marker;
         }
 
         // displayController.checkForWin();
@@ -80,9 +80,12 @@ const gameBoard = (() => {
         boardGrid.forEach((row, i) => {
             row.forEach((cell, j) => {
                 div = document.createElement('div');
+                span = document.createElement('span');
                 div.classList.add('cell');
                 div.id = `${i}${j}`;
-                div.innerText = cell;
+
+                div.appendChild(span);
+                div.style.userSelect = 'none';
 
                 board.appendChild(div);
                 getCells();

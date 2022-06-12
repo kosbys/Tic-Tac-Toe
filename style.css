@@ -44,6 +44,19 @@ body {
     background-color: #eff1f5;
 }
 
+.cell span {
+    animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .footer {
     text-align: center;
     margin-top: auto;
