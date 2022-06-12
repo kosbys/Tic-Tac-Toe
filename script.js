@@ -72,6 +72,24 @@ const gameBoard = (() => {
                 break;
             }
         }
+
+        checkFull();
+    };
+
+    const checkFull = () => {
+        let rows = 0;
+        boardGrid.forEach((row) => {
+            const k = row.every((x) => {
+                return x === 'O' || x === 'X';
+            });
+            if (k) {
+                rows++;
+            }
+        });
+
+        if (rows === 3) {
+            displayController.announceDraw();
+        }
     };
 
     const updateBoard = (cell, marker) => {
@@ -140,6 +158,27 @@ const displayController = (() => {
         }, 2000);
     };
 
+    const announceDraw = () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+
+        div.classList.add('draw-message');
+        span.innerText = `It's a draw! Restarting...`;
+
+        div.appendChild(span);
+
+        content.appendChild(div);
+
+        gameBoard.getCells().forEach((cell) => {
+            cell.removeEventListener('click', placeMarker);
+        });
+
+        setTimeout(() => {
+            content.removeChild(content.lastChild);
+            gameBoard.clearBoard();
+        }, 2000);
+    };
+
     const changeTurns = () => {
         players.forEach((player) => {
             player.toggleFlag();
@@ -165,7 +204,7 @@ const displayController = (() => {
         }
     };
 
-    return { players, newGame, getCurrentPlayer, announceWin };
+    return { players, newGame, getCurrentPlayer, announceWin, announceDraw };
 })();
 
 displayController.newGame();
